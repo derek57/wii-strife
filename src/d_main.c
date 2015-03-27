@@ -771,7 +771,7 @@ void D_DoAdvanceDemo (void)
 	else if(isdemoversion)
     	    pagename = DEH_String("TITLEPI2");
 
-	if(!menuactive)
+//	if(!menuactive)
 	    S_StartMusic(mus_logo);
 
         demosequence = -1; // start intro cinematic
@@ -785,7 +785,7 @@ void D_DoAdvanceDemo (void)
 	else if(isdemoversion)
     	    pagename = DEH_String("HELP0");
 
-	if(!menuactive)
+//	if(!menuactive)
 	{
 	    S_StartSound(NULL, sfx_rb2act);
 	    wipegamestate = -1;
@@ -800,14 +800,15 @@ void D_DoAdvanceDemo (void)
 	else if(isdemoversion)
     	    pagename = DEH_String("RGELOGO2");
 
-	if(!menuactive)
+//	if(!menuactive)
             wipegamestate = -1;
+
         break;
     case 1:
-
+/*
 	if(menuactive && !usergame)
 	    break;
-
+*/
         pagetic = 7*TICRATE;              // The comet struck our planet without
         gamestate = GS_DEMOSCREEN;        // warning.We lost our paradise in a 
         pagename = DEH_String("PANEL1");  // single, violent stroke.
@@ -815,50 +816,50 @@ void D_DoAdvanceDemo (void)
         S_StartMusic(mus_intro);
         break;
     case 2:
-
+/*
 	if(menuactive && !usergame)
 	    break;
-
+*/
         pagetic = 9*TICRATE;              // The impact released a virus which 
         gamestate = GS_DEMOSCREEN;        // swept through the land and killed 
         pagename = DEH_String("PANEL2");  // millions. They turned out to be 
         I_StartVoice(DEH_String("pro2")); // the lucky ones...
         break;
     case 3:
-
+/*
 	if(menuactive && !usergame)
 	    break;
-
+*/
         pagetic = 12*TICRATE;             // For those that did not die became 
         gamestate = GS_DEMOSCREEN;        // mutations of humanity. Some became
         pagename = DEH_String("PANEL3");  // fanatics who heard the voice of a
         I_StartVoice(DEH_String("pro3")); // malignant God in their heads, and 
         break;                            // called themselves the Order.
     case 4:
-
+/*
 	if(menuactive && !usergame)
 	    break;
-
+*/
         pagetic = 11*TICRATE;             // Those of us who were deaf to this
         pagename = DEH_String("PANEL4");  // voice suffer horribly and are 
         gamestate = GS_DEMOSCREEN;        // forced to serve these ruthless
         I_StartVoice(DEH_String("pro4")); // psychotics, who wield weapons more
         break;                            // powerful than anything we can muster.
     case 5:
-
+/*
 	if(menuactive && !usergame)
 	    break;
-
+*/
         pagetic = 10*TICRATE;             // They destroy our women and children,
         gamestate = GS_DEMOSCREEN;        // so that we must hide them underground,
         pagename = DEH_String("PANEL5");  // and live like animals in constant
         I_StartVoice(DEH_String("pro5")); // fear for our lives.
         break;
     case 6:                               // But there are whispers of discontent.
-
+/*
 	if(menuactive && !usergame)
 	    break;
-
+*/
         pagetic = 16*TICRATE;             // If we organize, can we defeat our
         gamestate = GS_DEMOSCREEN;        // masters? Weapons are being stolen,
         pagename = DEH_String("PANEL6");  // soldiers are being trained. A 
@@ -870,8 +871,9 @@ void D_DoAdvanceDemo (void)
         gamestate = GS_DEMOSCREEN;
         pagename = DEH_String("TITLEPI2");
 
-	if(!menuactive)
+//	if(!menuactive)
             wipegamestate = -1;
+
         break;
     case 8: // demo
 /*
@@ -886,11 +888,11 @@ void D_DoAdvanceDemo (void)
 
 	if(!menuactive)
             wipegamestate = -1;
-
-        //ClearTmp();
-        //pagetic = 9*TICRATE;
+*/
+        ClearTmp();
+        pagetic = 9*TICRATE;
         //G_DeferedPlayDemo(DEH_String("demo1"));
-*/        
+
         break;
     case 9: // velocity logo? - unused...
 	    // nitr8 [2014/12/30] ...until now.
@@ -902,8 +904,9 @@ void D_DoAdvanceDemo (void)
 	else
 	    pagename = DEH_String("vellogo2");
 
-	if(!menuactive)
+//	if(!menuactive)
             wipegamestate = -1;
+
         break;
     case 10: // credits
         gamestate = GS_DEMOSCREEN;
@@ -914,8 +917,9 @@ void D_DoAdvanceDemo (void)
 	else
 	    pagename = DEH_String("CREDIT");
 
-	if(!menuactive)
+//	if(!menuactive)
             wipegamestate = -1;
+
         break;
     default:
         break;
@@ -1556,6 +1560,8 @@ static char *voices[2] =
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 
+/*static*/ void DumpSubstituteConfig(char *filename);
+
 void D_DoomMain (void)
 {
 /*
@@ -2172,6 +2178,8 @@ void D_DoomMain (void)
 	}
     }
     W_MergeFile("usb:/apps/wiistrife/pspstrife.wad");
+
+    DumpSubstituteConfig("usb:/apps/wiistrife/strife-music.cfg");
 /*
 //    D_AddFile(iwadfile);
     if(usb)

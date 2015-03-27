@@ -750,7 +750,7 @@ static boolean IsMusicLump(int lumpnum)
 // Dump an example config file containing checksums for all MIDI music
 // found in the WAD directory.
 
-static void DumpSubstituteConfig(char *filename)
+/*static*/ void DumpSubstituteConfig(char *filename)
 {
     sha1_context_t context;
     sha1_digest_t digest;
@@ -966,9 +966,9 @@ static boolean I_SDL_InitMusic(void)
     {
         DumpSubstituteConfig(myargv[i + 1]);
     }
-*/
-    DumpSubstituteConfig("usb:/apps/wiistrife/strife-music.cfg");
 
+    DumpSubstituteConfig("usb:/apps/wiistrife/strife-music.cfg");
+*/
     // If SDL_mixer is not initialized, we have to initialize it
     // and have the responsibility to shut it down later on.
 
