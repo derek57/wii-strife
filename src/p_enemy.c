@@ -44,6 +44,8 @@
 #include "f_finale.h"
 #include "p_inter.h"
 
+extern boolean isdemoversion;
+
 // Forward Declarations:
 void A_RandomWalk(mobj_t *);
 void A_ProgrammerAttack(mobj_t* actor);
@@ -342,8 +344,16 @@ boolean P_CheckMissileRange(mobj_t* actor)
         dist = 150;
 
     // haleyjd 20100910: Hex-Rays was leaving this out completely:
-    if (actor->type == MT_CRUSADER && dist > 120)
-        dist = 120;
+    if(!isdemoversion)
+    {
+	if (actor->type == MT_CRUSADER && dist > 120)
+            dist = 120;
+    }
+    else
+    {
+	if (actor->type == MT_CRUSADER_2 && dist > 120)
+            dist = 120;
+    }
 
     // haleyjd 20110224 [STRIFE]: reversed predicate
     return (dist < P_Random());
@@ -1319,17 +1329,35 @@ void A_SentinelAttack(mobj_t* actor)
     angle_t an;
     int i;
 
-    mo = P_SpawnFacingMissile(actor, actor->target, MT_L_LASER);
+    if(!isdemoversion)
+	mo = P_SpawnFacingMissile(actor, actor->target, MT_L_LASER);
+    else
+	mo = P_SpawnFacingMissile(actor, actor->target, MT_L_LASER_2);
+
     an = actor->angle >> ANGLETOFINESHIFT;
 
     if(mo->momy | mo->momx) // villsa - fixed typo (yes, they actually used '|' instead of'||')
     {
         for(i = 8; i > 1; i--)
         {
-            x = mo->x + FixedMul(mobjinfo[MT_L_LASER].radius * i, finecosine[an]);
-            y = mo->y + FixedMul(mobjinfo[MT_L_LASER].radius * i, finesine[an]);
+	    if(!isdemoversion)
+	    {
+                x = mo->x + FixedMul(mobjinfo[MT_L_LASER].radius * i, finecosine[an]);
+                y = mo->y + FixedMul(mobjinfo[MT_L_LASER].radius * i, finesine[an]);
+	    }
+	    else
+	    {
+                x = mo->x + FixedMul(mobjinfo[MT_L_LASER_2].radius * i, finecosine[an]);
+                y = mo->y + FixedMul(mobjinfo[MT_L_LASER_2].radius * i, finesine[an]);
+	    }
+
             z = mo->z + i * (mo->momz >> 2);
-            mo2 = P_SpawnMobj(x, y, z, MT_R_LASER);
+
+	    if(!isdemoversion)
+                mo2 = P_SpawnMobj(x, y, z, MT_R_LASER);
+	    else
+                mo2 = P_SpawnMobj(x, y, z, MT_R_LASER_2);
+
             mo2->target = actor;
             mo2->momx = mo->momx;
             mo2->momy = mo->momy;
@@ -2127,7 +2155,12 @@ void A_SpawnSparkPuff(mobj_t* actor)
     y = (10*FRACUNIT) * ((r & 3) - (P_Random() & 3)) + actor->y;
 
     mo = P_SpawnMobj(x, y, actor->z, MT_SPARKPUFF);
-    P_SetMobjState(mo, S_BNG4_01); // 199
+
+    if(!isdemoversion)
+        P_SetMobjState(mo, S_BNG4_01); // 199
+    else
+        P_SetMobjState(mo, S_BNGD_01); // 199
+
     mo->momz = FRACUNIT;
 }
 

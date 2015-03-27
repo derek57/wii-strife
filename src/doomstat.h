@@ -273,6 +273,7 @@ extern	int		rndindex;
 
 extern  ticcmd_t        *netcmds;
 
+extern	boolean		cast_running;
 
 
 #endif

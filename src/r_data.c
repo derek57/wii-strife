@@ -38,6 +38,8 @@
 
 #include "doomfeatures.h"
 
+#include "c_io.h"
+
 //#define printf pspDebugScreenPrintf
 
 //
@@ -780,13 +782,18 @@ int R_FlatNumForName (char* name)
     int		i;
     char	namet[9];
 
+    if (name[0] == 'F' && name[1] == '_' && name[2] == 'G' && name[3] == 'R' && name[4] == 'A' &&
+            name[5] == 'S' && name[6] == 'S' && isdemoversion)
+	name = "F_GRASSD";
+
     i = W_CheckNumForName (name);
 
     if (i == -1)
     {
 	namet[8] = 0;
 	memcpy (namet, name,8);
-	I_Error ("R_FlatNumForName: %s not found",namet);
+//	I_Error ("R_FlatNumForName: %s not found",namet);
+	C_Printf("R_FlatNumForName: %.8s not found", name);
     }
     return i - firstflat;
 }
@@ -833,16 +840,219 @@ int	R_CheckTextureNumForName (char *name)
 int	R_TextureNumForName (char* name)
 {
     int		i;
-	
-    i = R_CheckTextureNumForName (name);
+
+    if (name[0] == 'A' &&
+	    name[1] == 'A' &&
+	    name[2] == 'S' &&
+	    name[3] == 'T' &&
+	    name[4] == 'I' &&
+            name[5] == 'N' &&
+	    name[6] == 'K' &&
+	    name[7] == 'Y' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("AASTINKD");
+
+    else if(name[0] == 'B' &&
+	    name[1] == 'I' &&
+	    name[2] == 'G' &&
+	    name[3] == 'S' &&
+	    name[4] == 'T' &&
+            name[5] == 'N' &&
+	    name[6] == '0' &&
+	    name[7] == '1' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("BIGSTN1D");
+
+    else if(name[0] == 'C' &&
+	    name[1] == 'O' &&
+	    name[2] == 'M' &&
+	    name[3] == 'P' &&
+	    name[4] == '0' &&
+            name[5] == '4' &&
+	    name[6] == 'B' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("COMP04BD");
+
+    else if(name[0] == 'C' &&
+	    name[1] == 'O' &&
+	    name[2] == 'M' &&
+	    name[3] == 'P' &&
+	    name[4] == '1' &&
+            name[5] == '2' &&
+	    name[6] == 'B' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("COMP12BD");
+
+    else if(name[0] == 'R' &&
+	    name[1] == 'O' &&
+	    name[2] == 'B' &&
+	    name[3] == 'O' &&
+	    name[4] == 'T' &&
+            name[5] == '0' &&
+	    name[6] == '2' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("ROBOT02D");
+
+    else if(name[0] == 'S' &&
+	    name[1] == 'I' &&
+	    name[2] == 'G' &&
+	    name[3] == 'N' &&
+	    name[4] == '0' &&
+            name[5] == '2' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SIGN02D");
+
+    else if(name[0] == 'S' &&
+	    name[1] == 'I' &&
+	    name[2] == 'G' &&
+	    name[3] == 'N' &&
+	    name[4] == '0' &&
+            name[5] == '3' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SIGN03D");
+    
+    else if(name[0] == 'S' &&
+	    name[1] == 'I' &&
+	    name[2] == 'G' &&
+	    name[3] == 'N' &&
+	    name[4] == '0' &&
+            name[5] == '4' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SIGN04D");
+
+    else if(name[0] == 'S' &&
+	    name[1] == 'I' &&
+	    name[2] == 'G' &&
+	    name[3] == 'N' &&
+	    name[4] == '0' &&
+            name[5] == '5' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SIGN05D");
+
+    else if(name[0] == 'S' &&
+	    name[1] == 'I' &&
+	    name[2] == 'G' &&
+	    name[3] == 'N' &&
+	    name[4] == '0' &&
+            name[5] == '6' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SIGN06D");
+
+    else if(name[0] == 'S' &&
+	    name[1] == 'I' &&
+	    name[2] == 'G' &&
+	    name[3] == 'N' &&
+	    name[4] == '0' &&
+            name[5] == '7' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SIGN07D");
+
+    else if(name[0] == 'S' &&
+	    name[1] == 'I' &&
+	    name[2] == 'G' &&
+	    name[3] == 'N' &&
+	    name[4] == '0' &&
+            name[5] == '9' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SIGN09D");
+
+    else if(name[0] == 'S' &&
+	    name[1] == 'I' &&
+	    name[2] == 'G' &&
+	    name[3] == 'N' &&
+	    name[4] == '1' &&
+            name[5] == '0' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SIGN10D");
+
+    else if(name[0] == 'S' &&
+	    name[1] == 'I' &&
+	    name[2] == 'G' &&
+	    name[3] == 'N' &&
+	    name[4] == '1' &&
+            name[5] == '1' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SIGN11D");
+
+    else if(name[0] == 'S' &&
+	    name[1] == 'I' &&
+	    name[2] == 'G' &&
+	    name[3] == 'N' &&
+	    name[4] == '2' &&
+            name[5] == '0' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SIGN20D");
+
+    else if(name[0] == 'S' &&
+	    name[1] == 'I' &&
+	    name[2] == 'G' &&
+	    name[3] == 'N' &&
+	    name[4] == '2' &&
+            name[5] == '2' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SIGN22D");
+
+    else if(name[0] == 'S' &&
+	    name[1] == 'K' &&
+	    name[2] == 'Y' &&
+	    name[3] == 'M' &&
+	    name[4] == 'N' &&
+            name[5] == 'T' &&
+            name[6] == '0' &&
+            name[7] == '2' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SKYMNT2D");
+
+    else if(name[0] == 'S' &&
+	    name[1] == 'W' &&
+	    name[2] == 'C' &&
+	    name[3] == 'H' &&
+	    name[4] == 'N' &&
+            name[5] == '0' &&
+            name[6] == '1' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SWCHN1D");
+
+    else if(name[0] == 'S' &&
+	    name[1] == 'W' &&
+	    name[2] == 'C' &&
+	    name[3] == 'H' &&
+	    name[4] == 'N' &&
+            name[5] == '0' &&
+            name[6] == '2' &&
+	    isdemoversion)
+
+	i = R_CheckTextureNumForName ("SWCHN2D");
+    else
+	i = R_CheckTextureNumForName (name);
 
     if (i==-1)
     {
-	I_Error ("R_TextureNumForName: %s not found",
-		 name);
+//	I_Error ("R_TextureNumForName: %s not found", name);
+	C_Printf("R_TextureNumForName: %.8s not found", name);
     }
     return i;
 }
+
+
 
 //
 // R_SoundNumForDoor

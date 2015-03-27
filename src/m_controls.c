@@ -298,6 +298,7 @@ extern int forwardmove;
 extern int sidemove;
 extern int turnspeed;
 extern int crosshair;
+extern int mus_engine;
 
 extern int joy_up;
 extern int joy_down;
@@ -348,6 +349,7 @@ void M_BindBaseControls(void)
     M_BindVariable("map_rotate",             &am_rotate);
     M_BindVariable("detail",                 &detailLevel);
     M_BindVariable("xhair",                  &crosshair);
+    M_BindVariable("music_engine",           &mus_engine);
 //    M_BindVariable("btn_layout",             &button_layout);
 										// FIXME: IF ACTIVATED,
 //    M_BindVariable("vanilla_weapon_change",  &use_vanilla_weapon_change); 	// CRASHES GAME IF
@@ -368,6 +370,7 @@ void M_BindBaseControls(void)
     M_BindVariable("key_jump",               &joy_home);
     M_BindVariable("key_inventory_drop",     &joy_y);
     M_BindVariable("key_run",                &joy_1);
+    M_BindVariable("key_console",            &joy_2);
 /*
     M_BindVariable("use_mouse",                 &usemouse);
     M_BindVariable("key_invDrop",        &key_invdrop);

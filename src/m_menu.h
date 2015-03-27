@@ -97,6 +97,12 @@ void M_LoadSelect(int choice);
 
 void M_SizeDisplay(int choice);
 
+//
+// Find string width from hu_font chars
+//
+
+int M_StringWidth(char* string);
+
 extern int detailLevel;
 extern int screenblocks;
 

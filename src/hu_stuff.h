@@ -55,6 +55,12 @@ void HU_Drawer(void);
 //char HU_dequeueChatChar(void);
 void HU_Erase(void);
 
+// hu_newlevel called when we enter a new level
+// determine the level name and display it in
+// the console
+
+void HU_NewLevel();
+
 //extern char *chat_macros[10];
 extern char player_names[8][16];   // villsa [STRIFE]
 

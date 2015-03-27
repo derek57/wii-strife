@@ -71,6 +71,8 @@
 
 #include "doomfeatures.h"
 
+#include "c_io.h"
+
 #define SAVEGAMESIZE	0x2c000
 
 void	G_ReadDemoTiccmd (ticcmd_t* cmd); 
@@ -305,6 +307,7 @@ int	joybjump = 12;
 int	joybinvkey = 13;
 int     joybdrop = 14;
 int	joybspeed = 15;
+int	joybconsole = 16;
 
 extern fixed_t 	mtof_zoommul; // how far the window zooms in each tic (map coords)
 extern fixed_t 	ftom_zoommul; // how far the window zooms in each tic (fb coords)
@@ -758,6 +761,18 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 
 	if(data->btns_d)
 	{
+	    if(joybuttons[joybconsole])
+	    {
+		if(!menuactive)
+		{
+		    if (!consoleactive)
+		    {
+			C_SetConsole();
+			S_StartSound(NULL, sfx_drsmto);
+		    }
+		}
+	    }
+
 	    if(joybuttons[joybmenu])
 	    {
 		if (!menuactive)
@@ -1618,6 +1633,9 @@ void G_Ticker (void)
 
     case GS_DEMOSCREEN: 
         D_PageTicker (); 
+        break;
+
+    case GS_CONSOLE:
         break;
     }        
 } 
@@ -2626,11 +2644,18 @@ G_InitNew
     char *skytexturename;
     int             i; 
 
+    cast_running = false;
+
     if (paused) 
     { 
         paused = false; 
         S_ResumeSound (); 
     } 
+
+    if(map > 31)			// HACK AGAINST [SVE]: add more demo style
+	isdemoversion = true;		// HACK AGAINST [SVE]: add more demo style
+    else				// HACK AGAINST [SVE]: add more demo style
+	isdemoversion = false;		// HACK AGAINST [SVE]: add more demo style
 
     if (skill > sk_nightmare) 
         skill = sk_nightmare;
@@ -2664,9 +2689,18 @@ G_InitNew
         for(i = S_TURT_02; i <= S_TURT_03; i++)
             states[i].tics *= 2;
 
-        // Crusaders attack and feel pain slower
-        for(i = S_ROB2_09; i <= S_ROB2_19; i++)
-            states[i].tics *= 2;
+	if(!isdemoversion)
+	{
+            // Crusaders attack and feel pain slower
+            for(i = S_ROB2_09; i <= S_ROB2_19; i++)
+                states[i].tics *= 2;
+	}
+	else
+	{
+            // Crusaders attack and feel pain slower
+            for(i = S_ROBD_09; i <= S_ROBD_19; i++)
+                states[i].tics *= 2;
+	}
 
         // Stalkers think, walk, and attack slower
         for(i = S_SPID_03; i <= S_SPID_10; i++)
@@ -2692,8 +2726,16 @@ G_InitNew
             states[i].tics >>= 1;
 
         // Crusaders
-        for(i = S_ROB2_09; i <= S_ROB2_19; i++)
-            states[i].tics >>= 1;
+	if(!isdemoversion)
+	{
+            for(i = S_ROB2_09; i <= S_ROB2_19; i++)
+                states[i].tics >>= 1;
+	}
+	else
+	{
+            for(i = S_ROBD_09; i <= S_ROBD_19; i++)
+                states[i].tics >>= 1;
+	}
 
         // Stalkers
         for(i = S_SPID_03; i <= S_SPID_10; i++)

@@ -45,6 +45,8 @@
 
 #define BONUSADD    6
 
+extern boolean isdemoversion;
+
 #ifdef SHAREWARE
 extern boolean STRIFE_1_1_SHAREWARE;
 #endif
@@ -499,7 +501,8 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
         break;
 
     // box of missiles
-    case SPR_MSSL:
+    case SPR_MSSD:	// DEMO
+    case SPR_MSSL:	// RETAIL
         if(!P_GiveAmmo(player, am_missiles, 5))
             return;
         break;
@@ -618,14 +621,30 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
         break;
 
     // 1 Gold
+    case SPR_COND:
+	if(!isdemoversion)
+	    P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+	else
+	    P_GiveInventoryItem(player, SPR_COND, MT_MONY_2);
+        break;
+
+    // 1 Gold
     case SPR_COIN:
-        P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+	if(!isdemoversion)
+	    P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+	else
+	    P_GiveInventoryItem(player, SPR_COND, MT_MONY_2);
         break;
 
     // 10 Gold
     case SPR_CRED:
         for(i = 0; i < 10; i++)
-            P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+	{
+	    if(!isdemoversion)
+		P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+	    else
+		P_GiveInventoryItem(player, SPR_COND, MT_MONY_2);
+	}
         break;
 
     // 25 Gold
@@ -635,19 +654,28 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
         if(special->health < 0)
         {
             for(i = special->health; i != 0; i++)
-                P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+		if(!isdemoversion)
+		    P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+		else
+		    P_GiveInventoryItem(player, SPR_COND, MT_MONY_2);
         }
         else
         {
             for(i = 0; i < 25; i++)
-                P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+		if(!isdemoversion)
+		    P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+		else
+		    P_GiveInventoryItem(player, SPR_COND, MT_MONY_2);
         }
         break;
 
     // 50 Gold
     case SPR_CHST:
         for(i = 0; i < 50; i++)
-            P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+	    if(!isdemoversion)
+		P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+	    else
+		P_GiveInventoryItem(player, SPR_COND, MT_MONY_2);
         break;
 
     // Leather Armor
@@ -1363,21 +1391,42 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
     if(target->health <= 0)
     {
         // villsa [STRIFE] grenades hurt... OUCH
-        if(inflictor && inflictor->type == MT_HEGRENADE)
-            target->health = -target->info->spawnhealth;
-        else if(!(target->flags & MF_NOBLOOD))
-        {
-            // villsa [STRIFE] disintegration death
-            if(inflictor &&
-                (inflictor->type == MT_STRIFEPUFF3 || 
-                 inflictor->type == MT_L_LASER     || 
-                 inflictor->type == MT_TORPEDO     || 
-                 inflictor->type == MT_TORPEDOSPREAD))
+	if(!isdemoversion)
+	{
+            if(inflictor && inflictor->type == MT_HEGRENADE)
+                target->health = -target->info->spawnhealth;
+            else if(!(target->flags & MF_NOBLOOD))
             {
-                S_StartSound(target, sfx_dsrptr);
-                target->health = -6666;
+                // villsa [STRIFE] disintegration death
+                if (inflictor &&
+                   (inflictor->type == MT_STRIFEPUFF3 || 
+                    inflictor->type == MT_L_LASER     || 
+                    inflictor->type == MT_TORPEDO     || 
+                    inflictor->type == MT_TORPEDOSPREAD))
+                {
+                    S_StartSound(target, sfx_dsrptr);
+                    target->health = -6666;
+                }
             }
-        }
+	}
+	else
+	{
+            if(inflictor && inflictor->type == MT_HEGRENADE_2)
+                target->health = -target->info->spawnhealth;
+            else if(!(target->flags & MF_NOBLOOD))
+            {
+                // villsa [STRIFE] disintegration death
+                if (inflictor &&
+                   (inflictor->type == MT_STRIFEPUFF3 || 
+                    inflictor->type == MT_L_LASER_2   || 
+                    inflictor->type == MT_TORPEDO     || 
+                    inflictor->type == MT_TORPEDOSPREAD))
+                {
+                    S_StartSound(target, sfx_dsrptr);
+                    target->health = -6666;
+                }
+            }
+	}
 
         // villsa [STRIFE] flame death stuff
         if(!(target->flags & MF_NOBLOOD)

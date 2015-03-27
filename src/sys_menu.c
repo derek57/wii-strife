@@ -17,6 +17,8 @@
 #include "d2x-cios-installer.h"
 #include "gui.h"
 
+#include "doomfeatures.h"
+
 /* Macros */
 #define NB_FAT_DEVICES	(sizeof(fdevList) / sizeof(fatDevice))
 #define MAXPATH		0x108
@@ -391,18 +393,17 @@ void Menu_WadList(void)
 {
     bool	md5_check = false;
 
-    char	line[BUFSIZ];
+    char	buffer[4];
     char	check[MAXPATH];
     char	iwad_term[] = "IWAD";
     char	pwad_term[] = "PWAD";
-    char	deh_term[] = "Patch File for DeHackEd";
+    char	deh_term[] = "Patc";
     char	str [100];
     char	stripped_target[MAXPATH] = "";
     char	stripped_extra_wad_1[256] = "";
     char	stripped_extra_wad_2[256] = "";
     char	stripped_extra_wad_3[256] = "";
     char	stripped_dehacked_file[256] = "";
-    char	*temp;
     char	*tmpPath = malloc (MAX_FILE_PATH_LEN);
 
     const char	*iwad_ver = NULL;
@@ -415,28 +416,36 @@ void Menu_WadList(void)
     extern char	extra_wad_3[256];
     extern char	dehacked_file[256];
     extern char calculated_md5_string[33];
-    extern char known_md5_string_strife_share_1_0_iwad[33];
-    extern char known_md5_string_strife_share_1_1_iwad[33];
+    extern char known_md5_string_voices_iwad[33];
     extern char known_md5_string_strife_reg_1_0_iwad[33];
     extern char known_md5_string_strife_reg_1_2_iwad[33];
-    extern char known_md5_string_voices_iwad[33];
+
+#ifdef SHAREWARE
+    extern char known_md5_string_strife_share_1_0_iwad[33];
+    extern char known_md5_string_strife_share_1_1_iwad[33];
+#endif
+
+    int		i, c;
 /*
     int		installCnt = 0;
     int		uninstallCnt = 0;
     int		WADLoaded = 0;
     int		txtLoaded = 0;
+    int		load_voices = 0;
 */
-//    int		load_voices = 0;
-
     extern int	extra_wad_slot_1_loaded;
     extern int	extra_wad_slot_2_loaded;
     extern int	extra_wad_slot_3_loaded;
     extern int	fsize;
     extern int	strife1_wad_exists;
 
-//    extern int	voices_wad_exists;
-//    extern int	fsizerw;
-
+#ifdef SHAREWARE
+    extern int	strife0_wad_exists;
+#endif
+/*
+    extern int	voices_wad_exists;
+    extern int	fsizerw;
+*/
     FILE	*file;
 
     fatFile	*fileList = NULL;
@@ -601,7 +610,11 @@ void Menu_WadList(void)
 	printStyledText(9, 41,CONSOLE_FONT_BLACK,CONSOLE_FONT_GREEN,CONSOLE_FONT_BOLD,&stTexteLocation,stripped_extra_wad_3);
 	printStyledText(9, 33,CONSOLE_FONT_BLACK,CONSOLE_FONT_WHITE,CONSOLE_FONT_BOLD,&stTexteLocation,"|");
 
-	if(extra_wad_loaded || load_dehacked || strife1_wad_exists)
+	if(extra_wad_loaded || load_dehacked || strife1_wad_exists
+#ifdef SHAREWARE
+								 || strife0_wad_exists
+#endif
+											)
 	    printStyledText(9, 18,CONSOLE_FONT_BLACK,CONSOLE_FONT_WHITE,CONSOLE_FONT_BOLD,&stTexteLocation,"X: start over");
 
 	printStyledText(10, 35,CONSOLE_FONT_BLACK,CONSOLE_FONT_GREEN,CONSOLE_FONT_BOLD,&stTexteLocation,".DEH: ");
@@ -798,31 +811,7 @@ void Menu_WadList(void)
 
 		MD5_Check(check);
 
-		if (strncmp(calculated_md5_string, known_md5_string_strife_share_1_0_iwad, 32) == 0)
-		{
-/*
-		    strcpy(target, check);
-		    strcpy(stripped_target, tmpFile->filename);
-
-		    fsize = 28372168;
-
-		    strife1_wad_exists = 1;
-*/
-		    md5_check = true;
-		}
-		else if (strncmp(calculated_md5_string, known_md5_string_strife_share_1_1_iwad, 32) == 0)
-		{
-/*
-		    strcpy(target, check);
-		    strcpy(stripped_target, tmpFile->filename);
-
-		    fsize = 28372168;
-
-		    strife1_wad_exists = 1;
-*/
-		    md5_check = true;
-		}
-		else if (strncmp(calculated_md5_string, known_md5_string_strife_reg_1_0_iwad, 32) == 0)
+		if (strncmp(calculated_md5_string, known_md5_string_strife_reg_1_0_iwad, 32) == 0)
 		{
 		    strcpy(target, check);
 		    strcpy(stripped_target, tmpFile->filename);
@@ -861,6 +850,31 @@ void Menu_WadList(void)
 */
 		    md5_check = true;
 		}
+#ifdef SHAREWARE
+		else if (strncmp(calculated_md5_string, known_md5_string_strife_share_1_0_iwad, 32) == 0)
+		{
+/*
+		    strcpy(target, check);
+		    strcpy(stripped_target, tmpFile->filename);
+
+		    fsize = 28372168;
+
+		    strife1_wad_exists = 1;
+*/
+		    md5_check = true;
+		}
+		else if (strncmp(calculated_md5_string, known_md5_string_strife_share_1_1_iwad, 32) == 0)
+		{
+		    strcpy(target, check);
+		    strcpy(stripped_target, tmpFile->filename);
+
+		    fsize = 9934413;
+
+		    strife0_wad_exists = 1;
+
+		    md5_check = true;
+		}
+#endif
 		else
 		    md5_check = false;
 
@@ -868,11 +882,76 @@ void Menu_WadList(void)
 
 		if (file != NULL && !md5_check)
 		{
-		    while (fgets(line, sizeof(line), file))
+		    for (i = 0; i < 4; i++)
 		    {
-			temp = line;
+			c = fgetc(file);	// Get character
 
-			if (strncmp(iwad_term, temp, 4) == 0)
+			buffer[i] = c;		// Store characters in array
+
+			if (strncmp(iwad_term, buffer, 4) == 0)
+			{
+			    if(extra_wad_slot_1_loaded == 0)
+			    {
+				load_extra_wad = 1;
+
+				strcpy(extra_wad_1, check);
+				strcpy(stripped_extra_wad_1, tmpFile->filename);
+
+				extra_wad_slot_1_loaded = 1;
+
+				extra_wad_loaded = 1;
+
+				break;
+			    }
+			    else if(extra_wad_slot_1_loaded == 1 && extra_wad_slot_2_loaded == 0)
+			    {
+				if(strcmp(check, extra_wad_1) != 0)
+				{
+				    load_extra_wad = 1;
+
+				    strcpy(extra_wad_2, check);
+				    strcpy(stripped_extra_wad_2, tmpFile->filename);
+
+				    extra_wad_slot_2_loaded = 1;
+
+				    extra_wad_loaded = 1;
+				}
+/*
+				else
+				{
+				    strcpy(extra_wad_2, "");
+
+				    extra_wad_slot_2_loaded = 0;
+				}
+*/
+				break;
+			    }
+			    else if(extra_wad_slot_1_loaded == 1 && extra_wad_slot_2_loaded == 1
+								 && extra_wad_slot_3_loaded == 0)
+			    {
+				if((strcmp(check, extra_wad_1) != 0 && strcmp(check, extra_wad_2) != 0))
+				{
+				    load_extra_wad = 1;
+
+				    strcpy(extra_wad_3, check);
+				    strcpy(stripped_extra_wad_3, tmpFile->filename);
+
+				    extra_wad_slot_3_loaded = 1;
+
+				    extra_wad_loaded = 1;
+				}
+/*
+				else
+				{
+				    strcpy(extra_wad_3, "");
+
+				    extra_wad_slot_3_loaded = 0;
+				}
+*/
+				break;
+			    }
+			}
+			else if (strncmp(pwad_term, buffer, 4) == 0 && extra_wad_slot_1_loaded == 0)
 			{
 			    load_extra_wad = 1;
 
@@ -881,69 +960,72 @@ void Menu_WadList(void)
 
 			    extra_wad_slot_1_loaded = 1;
 
-			    if(extra_wad_slot_1_loaded == 1)
+			    extra_wad_loaded = 1;
+
+			    break;
+			}
+			else if (strncmp(pwad_term, buffer, 4) == 0 && extra_wad_slot_1_loaded == 1
+								    && extra_wad_slot_2_loaded == 0)
+			{
+			    if(strcmp(check, extra_wad_1) != 0)
 			    {
+				load_extra_wad = 1;
+
 				strcpy(extra_wad_2, check);
 				strcpy(stripped_extra_wad_2, tmpFile->filename);
 
 				extra_wad_slot_2_loaded = 1;
-			    }
 
-			    if(extra_wad_slot_2_loaded == 1)
+				extra_wad_loaded = 1;
+			    }
+/*
+			    else
 			    {
+				strcpy(extra_wad_2, "");
+
+				extra_wad_slot_2_loaded = 0;
+			    }
+*/
+			    break;
+			}
+			else if (strncmp(pwad_term, buffer, 4) == 0 && extra_wad_slot_1_loaded == 1
+								    && extra_wad_slot_2_loaded == 1
+								    && extra_wad_slot_3_loaded == 0)
+			{
+			    if((strcmp(check, extra_wad_1) != 0 && strcmp(check, extra_wad_2) != 0))
+			    {
+				load_extra_wad = 1;
+
 				strcpy(extra_wad_3, check);
 				strcpy(stripped_extra_wad_3, tmpFile->filename);
 
 				extra_wad_slot_3_loaded = 1;
+
+				extra_wad_loaded = 1;
 			    }
+/*
+			    else
+			    {
+				strcpy(extra_wad_3, "");
 
-			    extra_wad_loaded = 1;
+				extra_wad_slot_3_loaded = 0;
+			    }
+*/
+			    break;
 			}
-			else if (strncmp(pwad_term, temp, 4) == 0 && extra_wad_slot_1_loaded == 0)
-			{
-			    load_extra_wad = 1;
-
-			    strcpy(extra_wad_1, check);
-			    strcpy(stripped_extra_wad_1, tmpFile->filename);
-
-			    extra_wad_slot_1_loaded = 1;
-
-			    extra_wad_loaded = 1;
-			}
-			else if (strncmp(pwad_term, temp, 4) == 0 && extra_wad_slot_1_loaded == 1
-								  && extra_wad_slot_2_loaded == 0)
-			{
-			    load_extra_wad = 1;
-
-			    strcpy(extra_wad_2, check);
-			    strcpy(stripped_extra_wad_2, tmpFile->filename);
-
-			    extra_wad_slot_2_loaded = 1;
-
-			    extra_wad_loaded = 1;
-			}
-			else if (strncmp(pwad_term, temp, 4) == 0 && extra_wad_slot_1_loaded == 1
-								  && extra_wad_slot_2_loaded == 1
-								  && extra_wad_slot_3_loaded == 0)
-			{
-			    load_extra_wad = 1;
-
-			    strcpy(extra_wad_3, check);
-			    strcpy(stripped_extra_wad_3, tmpFile->filename);
-
-			    extra_wad_slot_3_loaded = 1;
-
-			    extra_wad_loaded = 1;
-			}
-			else if (strncmp(deh_term, temp, 23) == 0) 
+			else if (strncmp(deh_term, buffer, 4) == 0) 
 			{
 			    load_dehacked = 1;
 
 			    strcpy(dehacked_file, check);
 			    strcpy(stripped_dehacked_file, tmpFile->filename);
+
+			    break;
 			}
 		    }
 		}
+		memset(buffer, 0, sizeof(buffer));
+
 		fclose(file);
 	    }
 	}
@@ -987,6 +1069,12 @@ void Menu_WadList(void)
 	    strcpy(extra_wad_2, "");
 	    strcpy(extra_wad_3, "");
 	    strcpy(target, "");
+
+	    extra_wad_slot_1_loaded = 0;
+	    extra_wad_slot_2_loaded = 0;
+	    extra_wad_slot_3_loaded = 0;
+
+	    extra_wad_loaded = 0;
 	}
 
 	/* List scrolling */

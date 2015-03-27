@@ -1,5 +1,4 @@
 //
-// Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -13,22 +12,18 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Put all global tate variables here.
+//     GUS emulation code.
 //
 
-#include <stdio.h>
+#ifndef __GUSCONF_H__
+#define __GUSCONF_H__
 
-#include "doomstat.h"
+#include "doomtype.h"
 
+extern char *gus_patch_path;
+extern unsigned int gus_ram_kb;
 
-// Game Mode - identify IWAD as shareware, retail etc.
-GameMode_t gamemode = indetermined;
-GameMission_t	gamemission = doom;
-GameVersion_t   gameversion = exe_strife_1_31;
-char *gamedescription;
+boolean GUS_WriteConfig(char *path);
 
-// Set if homebrew PWAD stuff has been added.
-//boolean	modifiedgame;
-
-boolean cast_running = false;
+#endif /* #ifndef __GUSCONF_H__ */
 

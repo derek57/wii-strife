@@ -170,6 +170,7 @@ extern int key_invright, key_invuse;
     CONFIG_VARIABLE_INT		(map_rotate),
     CONFIG_VARIABLE_INT		(detail),
     CONFIG_VARIABLE_INT		(xhair),
+    CONFIG_VARIABLE_INT		(music_engine),
 //    CONFIG_VARIABLE_INT		(btn_layout),
 									// FIXME: IF ACTIVATED,
 //    CONFIG_VARIABLE_INT		(vanilla_weapon_change),	// CRASHES GAME IF
@@ -190,6 +191,7 @@ extern int key_invright, key_invuse;
     CONFIG_VARIABLE_INT		(key_jump),
     CONFIG_VARIABLE_INT		(key_inventory_drop),
     CONFIG_VARIABLE_INT		(key_run),
+    CONFIG_VARIABLE_INT		(key_console),
 /*
 #ifdef FEATURE_SOUND
 
@@ -2293,6 +2295,18 @@ char *M_GetSaveGameDir(char *iwadname)
 	    savegameroot = SavePathRoot2USB;
 
 	    M_MakeDirectory(savegameroot);
+
+	    savegameroot = SavePathRootIWADUSB;
+
+	    M_MakeDirectory(savegameroot);
+
+	    savegameroot = SavePathRootPWADUSB;
+
+	    M_MakeDirectory(savegameroot);
+
+	    savegameroot = SavePathRootMusicUSB;
+
+	    M_MakeDirectory(savegameroot);
 	}
 	else if(sd)
 	{
@@ -2301,6 +2315,18 @@ char *M_GetSaveGameDir(char *iwadname)
 	    M_MakeDirectory(savegameroot);
 
 	    savegameroot = SavePathRoot2SD;
+
+	    M_MakeDirectory(savegameroot);
+
+	    savegameroot = SavePathRootIWADSD;
+
+	    M_MakeDirectory(savegameroot);
+
+	    savegameroot = SavePathRootPWADSD;
+
+	    M_MakeDirectory(savegameroot);
+
+	    savegameroot = SavePathRootMusicSD;
 
 	    M_MakeDirectory(savegameroot);
 	}

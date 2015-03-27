@@ -86,6 +86,7 @@ typedef enum
     GS_UNKNOWN,
     GS_FINALE,
     GS_DEMOSCREEN,
+    GS_CONSOLE
 } gamestate_t;
 
 typedef enum
@@ -374,10 +375,16 @@ typedef struct
 #define SavePathRoot2USB "usb:/apps/wiistrife/savegames/strife.wad"
 #define SavePathStrifeReg10USB "usb:/apps/wiistrife/savegames/strife.wad/REG_V10"
 #define SavePathStrifeReg12USB "usb:/apps/wiistrife/savegames/strife.wad/REG_V131"
+#define SavePathRootIWADUSB "usb:/apps/wiistrife/IWAD"
+#define SavePathRootPWADUSB "usb:/apps/wiistrife/PWAD"
+#define SavePathRootMusicUSB "usb:/apps/wiistrife/strife-music"
 #define SavePathRoot1SD "sd:/apps/wiistrife/savegames"
 #define SavePathRoot2SD "sd:/apps/wiistrife/savegames/strife.wad"
 #define SavePathStrifeReg10SD "sd:/apps/wiistrife/savegames/strife.wad/REG_V10"
 #define SavePathStrifeReg12SD "sd:/apps/wiistrife/savegames/strife.wad/REG_V131"
+#define SavePathRootIWADSD "sd:/apps/wiistrife/IWAD"
+#define SavePathRootPWADSD "sd:/apps/wiistrife/PWAD"
+#define SavePathRootMusicSD "sd:/apps/wiistrife/strife-music"
 
 #ifndef VER_ID
 #define VER_ID "DVL"

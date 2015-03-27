@@ -39,6 +39,8 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+#include "c_io.h"
+
 // when to clip out sounds
 // Does not fit the large outdoor areas.
 
@@ -64,11 +66,14 @@
 #define NORM_PRIORITY 64
 #define NORM_SEP 128
 
+extern boolean change_anyway;
+extern boolean isdemoversion;
+
 #ifdef SHAREWARE
 extern boolean STRIFE_1_0_SHAREWARE;
 extern boolean STRIFE_1_1_SHAREWARE;
 
-musicinfo_t *S_music = NULL;		// FOR PSP: (SHAREWARE RESTRICTIONS)
+musicinfo_t *S_music = NULL;			// FOR PSP: (SHAREWARE RESTRICTIONS)
 #else
 musicinfo_t *S_music = S_musicFull;		// FOR PSP: (SHAREWARE RESTRICTIONS)
 #endif
@@ -250,6 +255,11 @@ void S_Start(void)
     else
         mnum = -30;
 
+    if(gamemap == 32)		// HACK AGAINST [SVE]: add more demo style
+        mnum = 4;		// HACK AGAINST [SVE]: add more demo style
+    else if(gamemap == 34)	// HACK AGAINST [SVE]: add more demo style
+	mnum = 3;		// HACK AGAINST [SVE]: add more demo style
+
     S_ChangeMusic(gamemap + mnum, true);
 }
 
@@ -427,6 +437,30 @@ void S_StartSound(void *origin_p, int sfx_id)
         I_Error("Bad sfx #: %d", sfx_id);
     }
 
+    if(gamemap > 31)			// HACK AGAINST [SVE]: add more demo style
+    {
+	if(sfx_id == sfx_ambppl)
+	    sfx_id = sfx_ambpp2;
+	else if(sfx_id == sfx_drlmtc)
+	    sfx_id = sfx_drlmt2;
+	else if(sfx_id == sfx_drlmto)
+	    sfx_id = sfx_drlmt3;
+	else if(sfx_id == sfx_drlwud)
+	    sfx_id = sfx_drlwu2;
+	else if(sfx_id == sfx_drsmtc)
+	    sfx_id = sfx_drsmt2;
+	else if(sfx_id == sfx_drsmto)
+	    sfx_id = sfx_drsmt3;
+	else if(sfx_id == sfx_oof)
+	    sfx_id = sfx_oof2;
+	else if(sfx_id == sfx_ratact)
+	    sfx_id = sfx_ratac2;
+	else if(sfx_id == sfx_rebact)
+	    sfx_id = sfx_rebac2;
+	else if(sfx_id == sfx_wdrip)
+	    sfx_id = sfx_wdrip2;
+    }
+
     sfx = &S_sfx[sfx_id];
 
     // Initialize sound parameters
@@ -575,6 +609,41 @@ static voiceinfo_t *S_getVoice(const char *name, int lumpnum)
     return voice;
 }
 
+// [SVE]: this table helps fix up the demo maps
+static const char *demoVoices[][2] =
+{
+    { "VOC2", "VOC2_2" },
+    { "VOC4", "VOC223"  },
+    { "VOC6", "VOC205"  },
+    { "VOC7", "VOC225"  },
+    { "VOC8", "VOC233"  },
+    { "VOC9", "VOC237"  }
+};
+
+//
+// S_replaceDemoVoice
+//
+// haleyjd 20140906: [SVE] Remap some voice lumps when we are playing the
+// demo levels in the retail version of the game so that what's going on
+// makes sense. The vast majority of the Blackbird dialogs were re-recorded
+// with improved phrasing or just provided in a higher sample rate, so we use
+// those where they exist. Otherwise, the lumps have been added to SVE.wad.
+//
+static const char *S_replaceDemoVoice(const char *lumpname)
+{
+    int i;
+
+    if(!lumpname)
+        return lumpname;
+
+    for(i = 0; i < arrlen(demoVoices); i++)
+    {
+        if(!strncasecmp(lumpname, demoVoices[i][0], 8))
+            return demoVoices[i][1];
+    }
+    return lumpname;
+}
+
 //
 // I_StartVoice
 //
@@ -600,6 +669,10 @@ void I_StartVoice(const char *lumpname)
     // user has disabled voices?
     if(disable_voices)
         return;
+
+    // haleyjd 20140906: [SVE] check for demo redirection
+    if(isdemoversion && gamemap >= 32 && gamemap <= 34)
+        lumpname = S_replaceDemoVoice(lumpname);
 
     // have a voice playing already? stop it.
     if(i_voicehandle >= 0)
@@ -791,10 +864,12 @@ void S_ChangeMusic(int musicnum, int looping)
         music = &S_music[musicnum];
     }
 
-    if (mus_playing == music)
+    if (mus_playing == music && !change_anyway)
     {
         return;
     }
+
+    change_anyway = false;
 
     // shutdown old music
     S_StopMusic();
@@ -805,6 +880,11 @@ void S_ChangeMusic(int musicnum, int looping)
         M_snprintf(namebuf, sizeof(namebuf), "d_%s", DEH_String(music->name));
         music->lumpnum = W_GetNumForName(namebuf);
     }
+
+    if(looping)
+	C_Printf(" S_ChangeMusic: %s (loop = yes)\n", music->name);
+    else
+	C_Printf(" S_ChangeMusic: %s (loop = no)\n", music->name);
 
     music->data = W_CacheLumpNum(music->lumpnum, PU_STATIC);
 

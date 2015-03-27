@@ -87,6 +87,7 @@
 // the following is crap
 #define LINE_NEVERSEE ML_DONTDRAW
 
+extern boolean isdemoversion;
 extern boolean STRIFE_1_0_REGISTERED;
 extern boolean STRIFE_1_X_REGISTERED;
 
@@ -481,17 +482,13 @@ void AM_loadPics(void)
   
     for (i=0;i<10;i++)
     {
-//        sprintf(namebuf, 9, "PLMNUM%d", i);	// CHANGE FOR PSP: throws compiler warning (is fixed)
-
-    	if(STRIFE_1_0_REGISTERED || STRIFE_1_X_REGISTERED)	// FOR PSP: (THESE ARE NOT IN SHAREWARE)
+    	if(!isdemoversion)
     	    sprintf(namebuf, "PLMNUM%d", i);
-#ifdef SHAREWARE
-    	else if(STRIFE_1_0_SHAREWARE || STRIFE_1_1_SHAREWARE)	// FOR PSP: (THESE ARE IN SHAREWARE)
-    	    sprintf(namebuf, "AMMNUM%d", i);
-#endif
+    	else
+    	    sprintf(namebuf, "AMMNUM%d2", i);
+
         marknums[i] = W_CacheLumpName(namebuf, PU_STATIC);
     }
-
 }
 
 void AM_unloadPics(void)

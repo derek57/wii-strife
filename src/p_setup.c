@@ -40,6 +40,8 @@
 
 #include "doomstat.h"
 
+#include "c_io.h"
+#include "hu_stuff.h"
 
 void	P_SpawnMapThing (mapthing_t*	mthing);
 
@@ -112,6 +114,7 @@ mapthing_t	playerstarts[MAXPLAYERS];
 // haleyjd 08/24/10: [STRIFE] rift spots for player spawning
 mapthing_t      riftSpots[MAXRIFTSPOTS];
 
+extern boolean mus_cheat_used;
 
 
 
@@ -760,6 +763,10 @@ P_SetupLevel
 
     totalitems = 0;					// ADDED FOR PSP-STATS
 
+    P_InitSwitchList();
+
+    mus_cheat_used = false;
+
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
         // haleyjd 20100830: [STRIFE] Removed secretcount, itemcount
@@ -850,6 +857,10 @@ P_SetupLevel
         R_PrecacheLevel ();
 
     //printf ("free memory: 0x%x\n", Z_FreeMemory());
+
+    C_Printf(" HU_NewLevel executed\n");
+
+    HU_NewLevel();
 }
 
 
@@ -859,7 +870,7 @@ P_SetupLevel
 //
 void P_Init (void)
 {
-    P_InitSwitchList();
+//    P_InitSwitchList();
     P_InitPicAnims();
     P_InitTerrainTypes();   // villsa [STRIFE]
     R_InitSprites(sprnames);

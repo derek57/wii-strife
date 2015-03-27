@@ -114,5 +114,9 @@ void V_LoadXlaTable(void);
 
 void V_DrawMouseSpeedBox(int speed);
 
+// isprint() function (win32 doesnt like it, seems)
+
+boolean V_IsPrint(char c);
+
 #endif
 

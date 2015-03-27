@@ -66,6 +66,14 @@
 #define NETEND	"you can't end a netgame!\n\n"PRESSKEY
 #define ENDGAME	"are you sure you want\nto end the game?\n\n"PRESSYN
 
+// [SVE]
+#define NETNOSAVE   "You can't save a netgame.\n\n" PRESSKEY
+#define NETNOSAVEGP "You can't save a netgame.\n\n" PRESSGPB
+
+// [SVE]
+#define CASTPROMPT   "Want to see the cast?\n\n(Spoiler alert!)\n\n" PRESSYN
+#define CASTPROMPTGP "Want to see the cast?\n\n(Spoiler alert!)\n\n" PRESSGPCC
+
 // haleyjd 09/11/10: [STRIFE] No "to dos." on this
 #define DOSY		"(press y to quit)" 
 
@@ -180,10 +188,21 @@
 #define HUSTR_30        "AREA 30: Abandoned Front Base"
 #define HUSTR_31        "AREA 31: Training Facility"
 
-#define HUSTR_32        "AREA  1: Sanctuary"
-#define HUSTR_33        "AREA  2: Town"
-#define HUSTR_34        "AREA  3: Movement Base"
+#define HUSTR_32        "DEMO  1: Sanctuary"
+#define HUSTR_33        "DEMO  2: Town"
+#define HUSTR_34        "DEMO  3: Movement Base"
+
+#define HUSTR_35        "MAP35: Development Map"
+#define HUSTR_36        "MAP36: Development Map"
 /*
+// [SVE]: Super secret level
+#define HUSTR_35        "AREA 35: Factory: Production"
+
+// [SVE]: Capture the Chalice maps
+#define HUSTR_36        "AREA 36: Castle Clash"
+#define HUSTR_37        "AREA 37: Killing Grounds"
+#define HUSTR_38        "AREA 38: Ordered Chaos"
+
 // haleyjd 20110219: [STRIFE] replaced all with Strife chat macros:
 #define HUSTR_CHATMACRO1        "Fucker!"
 #define HUSTR_CHATMACRO2        "--SPLAT-- Instant wall art."
@@ -571,6 +590,21 @@
 "As you step off the transport, you hear\n"\
 "the stomp of a cyberdemon's iron shoe."
 
+//
+// HACK AGAINST [SVE]: add more demo style
+//
+#define DEMOTEXT \
+"Congratulations!\n"\
+"You have completed the Strife demo."
+//
+// HACK AGAINST [SVE]: add more demo style
+//
+
+// [SVE]
+#define PRESSYN 	"press y or n."
+#define PRESSGPCC       "press confirm or cancel."
+#define CASTPROMPT   "Want to see the cast?\n\n(Spoiler alert!)\n\n" PRESSYN
+#define CASTPROMPTGP "Want to see the cast?\n\n(Spoiler alert!)\n\n" PRESSGPCC
 
 
 //
@@ -593,6 +627,24 @@
 #define CC_SPIDER	"THE SPIDER MASTERMIND"
 #define CC_CYBER	"THE CYBERDEMON"
 #define CC_HERO	"OUR HERO"
+
+//
+// [SVE]
+//
+#define FHSTR_OFF	"FULLSCREEN HUD DISABLED"
+#define FHSTR_ON	"FULLSCREEN HUD ENABLED"
+#define MGSTR_OFF	"MORE GORE DISABLED"
+#define MGSTR_ON	"MORE GORE ENABLED"
+#define CMSTR_OFF	"CLASSIC MODE DISABLED"
+#define CMSTR_ON	"CLASSIC MODE ENABLED"
+#define WRSTR_OFF	"WEAPON RECOIL DISABLED"
+#define WRSTR_ON	"WEAPON RECOIL ENABLED"
+#define AASTR_OFF	"AUTOAIM DISABLED"
+#define AASTR_ON	"AUTOAIM ENABLED"
+#define FPSTR_OFF	"FAST ENEMIES DISABLED"
+#define FPSTR_ON	"FAST ENEMIES ENABLED"
+#define RPSTR_OFF	"RESPAWNING ENEMIES DISABLED"
+#define RPSTR_ON	"RESPAWNING ENEMIES ENABLED"
 
 
 #endif

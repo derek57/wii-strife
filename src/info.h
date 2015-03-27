@@ -290,6 +290,20 @@ typedef enum
     SPR_STLE, // 260
     SPR_HUGE, // 261
     SPR_STLG, // 262
+
+    // SPRITES FROM THE DEMO VERSION
+    SPR_COND, // 263
+    SPR_UNID, // 264
+    SPR_MSSD, // 265
+    SPR_SHTD, // 266
+    SPR_OFID, // 267
+    SPR_ROBD, // 268
+    SPR_BOMD, // 269
+    SPR_BNGD, // 270
+    SPR_LTRD, // 271
+    SPR_HOGD, // 272
+    SPR_STLD, // 273
+
     NUMSPRITES
 
 } spritenum_t;
@@ -1815,6 +1829,97 @@ typedef enum
     S_STLG_03,      // 1515
     S_STLG_04,      // 1516
     S_STLG_05,      // 1517
+
+    // HERE ARE THE SPRITES FROM THE DEMO VERSION
+    S_COND_00,      // 1526
+    S_UNID_00,      // 1527
+    S_MSSD_00,      // 1528
+    S_SHTD_00,      // 1529
+    S_SHTD_01,      // 1530
+    S_OFID_00,      // 1531
+    S_ROBD_00,      // 1532
+    S_ROBD_01,      // 1533
+    S_ROBD_02,      // 1534
+    S_ROBD_03,      // 1535
+    S_ROBD_04,      // 1536
+    S_ROBD_05,      // 1537
+    S_ROBD_06,      // 1538
+    S_ROBD_07,      // 1539
+    S_ROBD_08,      // 1540
+    S_ROBD_09,      // 1541
+    S_ROBD_10,      // 1542
+    S_ROBD_11,      // 1543
+    S_ROBD_12,      // 1544
+    S_ROBD_13,      // 1545
+    S_ROBD_14,      // 1546
+    S_ROBD_15,      // 1547
+    S_ROBD_16,      // 1548
+    S_ROBD_17,      // 1549
+    S_ROBD_18,      // 1550
+    S_ROBD_19,      // 1551
+    S_ROBD_20,      // 1552
+    S_ROBD_21,      // 1553
+    S_ROBD_22,      // 1554
+    S_ROBD_23,      // 1555
+    S_ROBD_24,      // 1556
+    S_ROBD_25,      // 1557
+    S_ROBD_26,      // 1558
+    S_ROBD_27,      // 1559
+    S_ROBD_28,      // 1560
+    S_ROBD_29,      // 1561
+    S_BOMD_00,      // 1562
+    S_BOMD_01,      // 1563
+    S_BOMD_02,      // 1564
+    S_BOMD_03,      // 1565
+    S_BOMD_04,      // 1566
+    S_BOMD_05,      // 1567
+    S_BOMD_06,      // 1568
+    S_BOMD_07,      // 1569
+    S_BOMD_08,      // 1570
+    S_BOMD_09,      // 1571
+    S_BOMD_10,      // 1572
+    S_BOMD_11,      // 1573
+    S_BOMD_12,      // 1574
+    S_BOMD_13,      // 1575
+    S_BOMD_14,      // 1576
+    S_BOMD_15,      // 1577
+    S_BOMD_16,      // 1578
+    S_BOMD_17,      // 1579
+    S_BOMD_18,      // 1580
+    S_BOMD_19,      // 1581
+    S_BOMD_20,      // 1582
+    S_BOMD_21,      // 1583
+    S_BOMD_22,      // 1584
+    S_BOMD_23,      // 1585
+    S_BOMD_24,      // 1586
+    S_BNGD_00,      // 1587
+    S_BNGD_01,      // 1588
+    S_BNGD_02,      // 1589
+    S_BNGD_03,      // 1590
+    S_BNGD_04,      // 1591
+    S_BNGD_05,      // 1592
+    S_BNGD_06,      // 1593
+    S_BNGD_07,      // 1594
+    S_BNGD_08,      // 1595
+    S_BNGD_09,      // 1596
+    S_BNGD_10,      // 1597
+    S_BNGD_11,      // 1598
+    S_BNGD_12,      // 1599
+    S_BNGD_13,      // 1600
+    S_LTRD_00,      // 1601
+    S_LTRD_01,      // 1602
+    S_LTRD_02,      // 1603
+    S_LTRD_03,      // 1604
+    S_HOGD_00,      // 1605
+    S_HOGD_01,      // 1606
+    S_HOGD_02,      // 1607
+    S_STLD_00,      // 1608
+    S_STLD_01,      // 1609
+    S_STLD_02,      // 1610
+    S_STLD_03,      // 1611
+    S_STLD_04,      // 1612
+    S_STLD_05,      // 1613
+
     NUMSTATES
 
 } statenum_t;
@@ -2181,6 +2286,21 @@ typedef enum
     MT_TOKEN_QUEST30,       //341
     MT_TOKEN_QUEST31,       //342
     MT_SLIDESHOW,       //343
+
+    // MOBJ TYPES FOR DEMO MODE
+    MT_MONY_2,				//346
+    MT_QUEST_UNIFORM_2,			//347
+    MT_AMINI_2,				//348
+    MT_R_LASER_2,			//349
+    MT_L_LASER_2,			//350
+    MT_QUEST_GUARD_UNIFORM_2,		//351
+    MT_CRUSADER_2,			//352
+    MT_HEGRENADE_2,			//353
+    MT_POWER_CRYSTAL_2,			//354
+    MT_LIGHT15_2,			//355
+    MT_MISC_15_2,			//356
+    MT_CAVE2_2,				//357
+
     NUMMOBJTYPES
 
 } mobjtype_t;

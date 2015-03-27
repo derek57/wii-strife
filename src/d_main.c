@@ -85,7 +85,9 @@
 #include "video.h"
 #include "gui.h"
 
-//#include "w_merge.h"
+#include "c_io.h"
+
+#include "w_merge.h"
 
 //#define printf pspDebugScreenPrintf
 
@@ -154,7 +156,10 @@ boolean		VOICES_1_X_REGISTERED;
 
 extern boolean	inhelpscreens;
 
+extern int mus_engine;
+
 skill_t		startskill;
+
 int             startepisode;
 int		startmap;
 int             startloadgame;
@@ -237,9 +242,11 @@ void D_ProcessEvents (void)
 
     while ((ev = D_PopEvent()) != NULL)
     {
-        if (M_Responder (ev) || AM_Responder (ev))		// FOR PSP: MOVED HERE BECAUSE OF...
-            continue;		// menu or map ate the event	// ...AUTOMAP ZOOM LOOPING EVEN IF...
-        G_Responder (ev);					// ...THE KEY HAS ALMOST BEEN RELEASED
+        if (M_Responder (ev) || AM_Responder (ev) ||		// FOR PSP: MOVED HERE BECAUSE OF...
+	        C_Responder (ev))				// ...AUTOMAP ZOOM LOOPING EVEN IF...
+            continue;						// ...THE KEY HAS ALMOST BEEN RELEASED
+	// menu or map ate the event
+        G_Responder (ev);
     }
 }
 
@@ -259,9 +266,11 @@ void D_ProcessEvents (void)
 //
 gamestate_t     wipegamestate = GS_UNKNOWN;
 extern boolean	setsizeneeded;
-extern boolean	wipe;
+//extern boolean	wipe;
 
 extern int	showMessages;	// [STRIFE] USUALLY THERE'S NO such variable
+
+//boolean         redrawsbar;
 
 void R_ExecuteSetViewSize (void);
 
@@ -279,7 +288,7 @@ void D_Display (void)
     int                         wipestart;
     int                         y;
     boolean                     done;
-//    boolean                     wipe;
+    boolean                     wipe;
     boolean                     redrawsbar;
 
     if (nodrawers)
@@ -356,6 +365,9 @@ void D_Display (void)
         D_PageDrawer ();
         break;
     
+    case GS_CONSOLE:
+        break;
+
     default:
         break;
     }
@@ -441,6 +453,7 @@ void D_Display (void)
     M_Drawer ();          // menu is drawn even on top of everything
     NetUpdate ();         // send out any new accumulation
 
+    C_Drawer();
 
     // normal update
     if (!wipe)
@@ -585,6 +598,9 @@ static boolean D_StartupGrabCallback(void)
 //
 //  haleyjd 08/23/10: [STRIFE] Verified unmodified.
 //
+
+/*static*/ void I_SDL_PollMusic(void);
+
 void D_DoomLoop (void)
 {
     if (demorecording)
@@ -635,6 +651,10 @@ void D_DoomLoop (void)
 //	int totalFreeMemSize = sceKernelTotalFreeMemSize();
 //	printf("sceKernelTotalFreeMemSize = %d\n", totalFreeMemSize);
 */
+	// check if the OGG music stopped playing
+	if(gamestate == GS_LEVEL && usergame)
+	    I_SDL_PollMusic();
+
         // frame syncronous IO operations
         I_StartFrame ();
 
@@ -710,6 +730,9 @@ void D_DoAdvanceDemo (void)
     paused = false;
     gameaction = ga_nothing;
     
+    // [SVE] svillarreal - moved here
+    main_loop_started = true;
+
     // villsa 09/12/10: [STRIFE] converted pagetics to ticrate
     switch (demosequence)
     {
@@ -731,33 +754,60 @@ void D_DoAdvanceDemo (void)
     case -3: // show Velocity logo for demo version
         pagetic = 6*TICRATE;
         gamestate = GS_DEMOSCREEN;
-        pagename = DEH_String("vellogo");
+
+	if(!isdemoversion)
+	    pagename = DEH_String("vellogo");
+	else
+	    pagename = DEH_String("vellogo2");
+
         demosequence = -5; // exit
         return;
     case -2: // title screen
         pagetic = 6*TICRATE;
         gamestate = GS_DEMOSCREEN;
-        pagename = DEH_String("TITLEPIC");
-        S_StartMusic(mus_logo);
+
+	if(!isdemoversion)
+	    pagename = DEH_String("TITLEPIC");
+	else if(isdemoversion)
+    	    pagename = DEH_String("TITLEPI2");
+
+	if(!menuactive)
+	    S_StartMusic(mus_logo);
+
         demosequence = -1; // start intro cinematic
         return;
     case -1: // start of intro cinematic
         pagetic = 10;
         gamestate = GS_DEMOSCREEN;
 
-	if(STRIFE_1_0_REGISTERED || STRIFE_1_X_REGISTERED) // FOR PSP: (NOT AVAIL. IN SHAREWARE v1.0)
+	if(!isdemoversion)
     	    pagename = DEH_String("PANEL0");
+	else if(isdemoversion)
+    	    pagename = DEH_String("HELP0");
 
-        S_StartSound(NULL, sfx_rb2act);
-        wipegamestate = -1;
+	if(!menuactive)
+	{
+	    S_StartSound(NULL, sfx_rb2act);
+	    wipegamestate = -1;
+	}
         break;
     case 0: // Rogue logo
         pagetic = 4*TICRATE;
         gamestate = GS_DEMOSCREEN;
-        pagename = DEH_String("RGELOGO");
-        wipegamestate = -1;
+
+	if(!isdemoversion)
+	    pagename = DEH_String("RGELOGO");
+	else if(isdemoversion)
+    	    pagename = DEH_String("RGELOGO2");
+
+	if(!menuactive)
+            wipegamestate = -1;
         break;
     case 1:
+
+	if(menuactive && !usergame)
+	    break;
+
         pagetic = 7*TICRATE;              // The comet struck our planet without
         gamestate = GS_DEMOSCREEN;        // warning.We lost our paradise in a 
         pagename = DEH_String("PANEL1");  // single, violent stroke.
@@ -765,57 +815,107 @@ void D_DoAdvanceDemo (void)
         S_StartMusic(mus_intro);
         break;
     case 2:
+
+	if(menuactive && !usergame)
+	    break;
+
         pagetic = 9*TICRATE;              // The impact released a virus which 
         gamestate = GS_DEMOSCREEN;        // swept through the land and killed 
         pagename = DEH_String("PANEL2");  // millions. They turned out to be 
         I_StartVoice(DEH_String("pro2")); // the lucky ones...
         break;
     case 3:
+
+	if(menuactive && !usergame)
+	    break;
+
         pagetic = 12*TICRATE;             // For those that did not die became 
         gamestate = GS_DEMOSCREEN;        // mutations of humanity. Some became
         pagename = DEH_String("PANEL3");  // fanatics who heard the voice of a
         I_StartVoice(DEH_String("pro3")); // malignant God in their heads, and 
         break;                            // called themselves the Order.
     case 4:
+
+	if(menuactive && !usergame)
+	    break;
+
         pagetic = 11*TICRATE;             // Those of us who were deaf to this
         pagename = DEH_String("PANEL4");  // voice suffer horribly and are 
         gamestate = GS_DEMOSCREEN;        // forced to serve these ruthless
         I_StartVoice(DEH_String("pro4")); // psychotics, who wield weapons more
         break;                            // powerful than anything we can muster.
     case 5:
+
+	if(menuactive && !usergame)
+	    break;
+
         pagetic = 10*TICRATE;             // They destroy our women and children,
         gamestate = GS_DEMOSCREEN;        // so that we must hide them underground,
         pagename = DEH_String("PANEL5");  // and live like animals in constant
         I_StartVoice(DEH_String("pro5")); // fear for our lives.
         break;
     case 6:                               // But there are whispers of discontent.
+
+	if(menuactive && !usergame)
+	    break;
+
         pagetic = 16*TICRATE;             // If we organize, can we defeat our
         gamestate = GS_DEMOSCREEN;        // masters? Weapons are being stolen,
         pagename = DEH_String("PANEL6");  // soldiers are being trained. A 
         I_StartVoice(DEH_String("pro6")); // Movement is born! Born of lifelong 
         break;                            // STRIFE!
     case 7: // titlepic again - unused...
+	    // nitr8 [2014/12/30] ...until now.
         pagetic = 9*TICRATE;
         gamestate = GS_DEMOSCREEN;
-        pagename = DEH_String("TITLEPIC");
-        wipegamestate = -1;
+        pagename = DEH_String("TITLEPI2");
+
+	if(!menuactive)
+            wipegamestate = -1;
         break;
     case 8: // demo
-        ClearTmp();
-        pagetic = 9*TICRATE;
-        G_DeferedPlayDemo(("demo1"));
+/*
+	if(menuactive && demosequence == 1 && !usergame)
+	    break;
+
+	if(!menuactive && !usergame)
+	    S_ChangeMusic(mus_dark, 1);
+
+        pagename = "BACKPIC";		// FIXME
+        pagetic = 58*TICRATE;
+
+	if(!menuactive)
+            wipegamestate = -1;
+
+        //ClearTmp();
+        //pagetic = 9*TICRATE;
+        //G_DeferedPlayDemo(DEH_String("demo1"));
+*/        
         break;
     case 9: // velocity logo? - unused...
+	    // nitr8 [2014/12/30] ...until now.
         pagetic = 6*TICRATE;
         gamestate = GS_DEMOSCREEN;
-        pagename = DEH_String("vellogo");
-        wipegamestate = -1;
+
+	if(!isdemoversion)
+	    pagename = DEH_String("vellogo");
+	else
+	    pagename = DEH_String("vellogo2");
+
+	if(!menuactive)
+            wipegamestate = -1;
         break;
     case 10: // credits
         gamestate = GS_DEMOSCREEN;
         pagetic = 12*TICRATE;
-        pagename = DEH_String("CREDIT");
-        wipegamestate = -1;
+
+	if(isdemoversion)
+	    pagename = DEH_String("CREDIT2");
+	else
+	    pagename = DEH_String("CREDIT");
+
+	if(!menuactive)
+            wipegamestate = -1;
         break;
     default:
         break;
@@ -823,10 +923,21 @@ void D_DoAdvanceDemo (void)
 
     ++demosequence;
 
+    if(menuactive && demosequence == 1 && !usergame)
+	demosequence = 11;
+
     if(demosequence > 11)
-        demosequence = -2;
-    if(demosequence == 7 || demosequence == 9)
+    {
+	if(!isdemoversion)
+	    demosequence = -2;
+	else
+	    demosequence = 0;
+    }
+
+    if((demosequence == 7 || demosequence == 9) && !isdemoversion)
         ++demosequence;
+
+    C_InstaPopup();       // make console go away
 }
 
 
@@ -1393,7 +1504,7 @@ static void D_DrawIntroSequence(void)
 //
 void D_IntroTick(void)
 {
-    static boolean didsound = false; // haleyjd 20120209
+//    static boolean didsound = false; // haleyjd 20120209
     
     if(devparm)
         return;
@@ -1408,11 +1519,15 @@ void D_IntroTick(void)
         // whatever reason, under DMX, playing the same sound multiple times
         // doesn't add up violently like it does under SDL_mixer. This means
         // that without this one-time limitation, the sound is far too loud.
+/*
+	// AS FIGURED OUT WHILE PORTING TO THE WII, THIS CAUSES TO CRASH THE GAME
+	// WHEN RUN FROM THIS POSITION SO IT HAS BEEN MOVED TO 
         if(!didsound)
         {
             S_StartSound(NULL, sfx_psdtha);
             didsound = true;
         }
+*/
     }
     else
         D_DrawIntroSequence();
@@ -1450,6 +1565,8 @@ void D_DoomMain (void)
 
     W_CheckSize(0);
 */
+    boolean didsound = false;
+
     FILE *fprw;
     FILE *fpv;
 
@@ -1662,6 +1779,8 @@ void D_DoomMain (void)
 
     //DEH_printf("Z_Init: Init zone memory allocation daemon. \n"); [STRIFE] removed
     Z_Init ();
+
+    C_Init ();
 /*
 #ifdef FEATURE_MULTIPLAYER
     //!
@@ -1901,6 +2020,16 @@ void D_DoomMain (void)
 
     M_LoadDefaults();
 
+    if(mus_engine > 1)
+	mus_engine = 2;
+    else if(mus_engine < 2)
+	mus_engine = 1;
+
+    if(mus_engine == 1)
+	snd_musicdevice = SNDDEVICE_SB;
+    else
+	snd_musicdevice = SNDDEVICE_GENMIDI;
+
     if (!graphical_startup)
     {
         showintro = false;
@@ -2042,12 +2171,14 @@ void D_DoomMain (void)
 //	    break;
 	}
     }
-
+    W_MergeFile("usb:/apps/wiistrife/pspstrife.wad");
+/*
 //    D_AddFile(iwadfile);
     if(usb)
 	D_AddFile("usb:/apps/wiistrife/pspstrife.wad");			// REQUIRED FOR SPECIAL PSP STUFF
     else if(sd)
 	D_AddFile("sd:/apps/wiistrife/pspstrife.wad");			// REQUIRED FOR SPECIAL PSP STUFF
+*/
 //    W_CheckCorrectIWAD(strife);		// DISABLED FOR PSP - sorry :-( I'LL TRY TO FIND A FIX
 //    modifiedgame = W_ParseCommandLine();
 
@@ -2500,8 +2631,10 @@ void D_DoomMain (void)
     D_IntroTick(); // [STRIFE]
 
     if(devparm)
+    {
         DEH_printf(" ST_Init: Init status bar.\n");
-    ST_Init ();
+	ST_Init ();
+    }
     D_IntroTick(); // [STRIFE]
 
     // haleyjd [STRIFE] -statcopy used to be here...
@@ -2571,6 +2704,12 @@ void D_DoomMain (void)
 	}
         else
             D_StartTitle ();                	// start up intro loop
+    }
+
+    if(!didsound && !devparm)			// WOULD ALSO PLAY THE SOUND WHEN BOOTING THE GAME...
+    {						// ...DIRECTLY INTO A MAP IN DEVELOPMENT MODE
+        S_StartSound(NULL, sfx_psdtha);
+        didsound = true;
     }
 
     D_DoomLoop ();  // never returns

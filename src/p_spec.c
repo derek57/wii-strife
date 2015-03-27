@@ -51,6 +51,7 @@
 #include "hu_stuff.h"
 #include "p_dialog.h"
 
+extern boolean isdemoversion;
 extern boolean STRIFE_1_0_REGISTERED;
 extern boolean STRIFE_1_X_REGISTERED;
 
@@ -1011,8 +1012,12 @@ P_CrossSpecialLine
         I_StartVoice(crosslinestr);
 
         // load objective
-        DEH_snprintf(crosslinestr, sizeof(crosslinestr), "log%i", line->tag);
-        GiveObjective(crosslinestr, 0);
+        // [SVE]: Don't load the demo level logs unless we're playing the demo levels
+        if(gamemap >= 32 || !(line->tag >= 5 && line->tag <= 9))
+        {
+            DEH_snprintf(crosslinestr, sizeof(crosslinestr), "log%i", line->tag);
+            GiveObjective(crosslinestr, 0);
+        }
 
         // Put up a message
         thing->player->message = DEH_String("Incoming Message...");
@@ -1039,8 +1044,12 @@ P_CrossSpecialLine
         I_StartVoice(crosslinestr);
 
         // load objective
-        DEH_snprintf(crosslinestr, sizeof(crosslinestr), "log%i", line->tag);
-        GiveObjective(crosslinestr, 0);
+        // [SVE]: Don't load the demo level logs unless we're playing the demo levels
+        if(gamemap >= 32 || !(line->tag >= 5 && line->tag <= 9))
+        {
+            DEH_snprintf(crosslinestr, sizeof(crosslinestr), "log%i", line->tag);
+            GiveObjective(crosslinestr, 0);
+        }
 
         // Put up a message
         thing->player->message = DEH_String("Incoming Message from BlackBird...");
@@ -1078,8 +1087,12 @@ P_CrossSpecialLine
         I_StartVoice(crosslinestr);
 
         // give objective
-        DEH_snprintf(crosslinestr, sizeof(crosslinestr), "log%i", line->tag/100);
-        GiveObjective(crosslinestr, 0);
+        // [SVE]: Don't load the demo level logs unless we're playing the demo levels
+        if(gamemap >= 32 || !(line->tag/100 >= 5 && line->tag/100 <= 9))
+        {
+            DEH_snprintf(crosslinestr, sizeof(crosslinestr), "log%i", line->tag/100);
+            GiveObjective(crosslinestr, 0);
+        }
 
         // Put up a message
         thing->player->message = DEH_String("Incoming Message from BlackBird...");
@@ -1346,9 +1359,18 @@ P_CrossSpecialLine
         break;
 
     case 198:
-        // haleyjd 09/21/10: [STRIFE] WR Raise Alarm if No Guard Uniform
-        if(P_PlayerHasItem(thing->player, MT_QUEST_GUARD_UNIFORM))
-            break;
+	if(!isdemoversion)
+	{
+            // haleyjd 09/21/10: [STRIFE] WR Raise Alarm if No Guard Uniform
+            if(P_PlayerHasItem(thing->player, MT_QUEST_GUARD_UNIFORM))
+                break;
+	}
+	else
+	{
+            // haleyjd 09/21/10: [STRIFE] WR Raise Alarm if No Guard Uniform
+            if(P_PlayerHasItem(thing->player, MT_QUEST_GUARD_UNIFORM_2))
+                break;
+	}
         // fall-through:
     case 150:
         // haleyjd 09/21/10: [STRIFE] WR Raise Alarm
@@ -1990,8 +2012,6 @@ void P_SpawnSpecials (void)
         memset(&buttonlist[i],0,sizeof(button_t));
 
     // villsa [STRIFE]
-#ifdef SHAREWARE
-    if(STRIFE_1_0_REGISTERED || STRIFE_1_X_REGISTERED)	// FOR PSP: (THOSE DOORS AREN'T AVAIL. IN 'DEMO')
-#endif
+    if(isdemoversion)	// FOR PSP: (THOSE DOORS AREN'T AVAIL. IN 'DEMO')
     	P_InitSlidingDoorFrames();
 }
