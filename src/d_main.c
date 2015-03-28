@@ -2177,9 +2177,19 @@ void D_DoomMain (void)
 //	    break;
 	}
     }
-    W_MergeFile("usb:/apps/wiistrife/pspstrife.wad");
 
-    DumpSubstituteConfig("usb:/apps/wiistrife/strife-music.cfg");
+    if(usb)
+    {
+        W_MergeFile("usb:/apps/wiistrife/pspstrife.wad");
+
+        DumpSubstituteConfig("usb:/apps/wiistrife/strife-music.cfg");
+    }
+    else if(sd)
+    {
+        W_MergeFile("sd:/apps/wiistrife/pspstrife.wad");
+
+        DumpSubstituteConfig("sd:/apps/wiistrife/strife-music.cfg");
+    }
 /*
 //    D_AddFile(iwadfile);
     if(usb)
