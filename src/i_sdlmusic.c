@@ -44,6 +44,7 @@
 
 #include "s_sound.h"
 #include "c_io.h"
+#include "f_finale.h"
 
 #define MAXMIDLENGTH (96 * 1024)
 #define MID_HEADER_MAGIC "MThd"
@@ -136,6 +137,7 @@ static boolean current_track_loop;
 boolean change_anyway;
 
 extern int musnum;
+extern int slideshow_state;
 
 extern boolean mus_cheat_used;
 extern boolean usb;
@@ -1367,7 +1369,21 @@ static void RestartCurrentTrack(void)
 	    change_anyway = true;
 
 	    if(!mus_cheat_used)
-		S_ChangeMusic(gamemap, 1);
+	    {
+		if(gamestate == GS_LEVEL)
+		    S_ChangeMusic(gamemap, 1);
+		else if(gamestate == GS_FINALE)
+		{
+		    S_ChangeMusic(mus_action, 1);
+
+		    if(    (slideshow_state == SLIDE_EXITHACK && (gamemap == 2 || gamemap == 9))    ||
+			   (slideshow_state == SLIDE_PROGRAMMER1 || slideshow_state == SLIDE_SIGIL1 ||
+			    slideshow_state == SLIDE_GOODEND1 || slideshow_state == SLIDE_BLAHEND1))
+			S_ChangeMusic(mus_dark, 1);
+		    else if(slideshow_state == SLIDE_DEMOEND1)
+			S_ChangeMusic(mus_drone, 1);
+		}
+	    }
 	    else
 		S_ChangeMusic(musnum, 1);
         }

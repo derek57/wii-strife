@@ -429,9 +429,11 @@ char *maptext[] =			// ADDED FOR PSP
 	"ABANDONED FRONT BASE",
 	"TRAINING FACILITY",
 //					DEMO ADDITIONS ???
-	"SANCTUARY (DEMO VER.)",
-	"TOWN (DEMO VER.)",
+	"SANCTUARY",
+	"TOWN",
 	"MOVEMENT BASE (DEMO VER.)",
+	"MAP35",
+	"MAP36",
 };
 
 char *mustext[] =			// ADDED FOR PSP

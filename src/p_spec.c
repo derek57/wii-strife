@@ -51,6 +51,7 @@
 #include "hu_stuff.h"
 #include "p_dialog.h"
 
+extern boolean finale_music;
 extern boolean isdemoversion;
 extern boolean STRIFE_1_0_REGISTERED;
 extern boolean STRIFE_1_X_REGISTERED;
@@ -1104,6 +1105,7 @@ P_CrossSpecialLine
         if(thing->player != &players[0])
             break;
         S_ChangeMusic(line->tag, 1);
+	finale_music = false;
         line->special = 0;
         break;
 
@@ -1415,6 +1417,7 @@ P_CrossSpecialLine
         if(thing->player != &players[0])
             break;
         S_ChangeMusic(line->tag, 1);
+	finale_music = false;
         break;
 
     case 231:

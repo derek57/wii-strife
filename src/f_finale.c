@@ -67,6 +67,7 @@ unsigned int  slideshow_tics;
 int           slideshow_state;
 
 boolean scroll_finished = false;					// ADDED FOR DEMO
+boolean finale_music;
 
 // haleyjd   09/13/10: [STRIFE] All this is unused...
 // nitr8  [2014/12/30] ...until now.
@@ -212,6 +213,7 @@ void F_StartFinale (void)
 	slideshow_tics = 7;						// ADDED FOR DEMO
 	slideshow_panel = DEH_String("PANEL0");				// ADDED FOR DEMO
 	S_ChangeMusic(mus_dark, 1);					// ADDED FOR DEMO
+	finale_music = false;
         slideshow_state = SLIDE_EXITHACK;
         break;
     case 3:  // Macil's exposition on the Programmer
@@ -220,6 +222,7 @@ void F_StartFinale (void)
 	slideshow_tics = 7;						// ADDED FOR DEMO
 	slideshow_panel = DEH_String("PANEL0");				// ADDED FOR DEMO
 	S_ChangeMusic(mus_dark, 1);					// ADDED FOR DEMO
+	finale_music = false;
         slideshow_state = SLIDE_PROGRAMMER1;
         break;
     case 9:  // Super hack for death of Programmer
@@ -228,6 +231,7 @@ void F_StartFinale (void)
 	slideshow_tics = 7;						// ADDED FOR DEMO
 	slideshow_panel = DEH_String("PANEL0");				// ADDED FOR DEMO
 	S_ChangeMusic(mus_dark, 1);					// ADDED FOR DEMO
+	finale_music = false;
         slideshow_state = SLIDE_EXITHACK; 
         break;
     case 10: // Macil's exposition on the Sigil
@@ -236,6 +240,7 @@ void F_StartFinale (void)
 	slideshow_tics = 7;						// ADDED FOR DEMO
 	slideshow_panel = DEH_String("PANEL0");				// ADDED FOR DEMO
 	S_ChangeMusic(mus_dark, 1);					// ADDED FOR DEMO
+	finale_music = false;
         slideshow_state = SLIDE_SIGIL1;
         break;
     case 29: // Endings
@@ -246,6 +251,7 @@ void F_StartFinale (void)
 	    slideshow_tics = 7;						// ADDED FOR DEMO
 	    slideshow_panel = DEH_String("PANEL0");			// ADDED FOR DEMO
 	    S_ChangeMusic(mus_dark, 1);					// ADDED FOR DEMO
+	    finale_music = false;
             if(players[0].health <= 0)            // Bad ending 
                 slideshow_state = SLIDE_BADEND1;  // - Humanity goes extinct
             else
@@ -494,6 +500,7 @@ static void F_DoSlideShow(void)
     case SLIDE_GOODEND1: // state #10
         slideshow_panel = DEH_String("SS4F1");
         S_StartMusic(mus_happy);
+	finale_music = true;
         I_StartVoice(DEH_String("RIE01"));
         slideshow_state = SLIDE_GOODEND2;
         slideshow_tics = 455;
@@ -518,6 +525,7 @@ static void F_DoSlideShow(void)
 
     case SLIDE_BADEND1: // state #14
         S_StartMusic(mus_sad);
+	finale_music = true;
         slideshow_panel = DEH_String("SS5F1");
         I_StartVoice(DEH_String("SS501b"));
         slideshow_state = SLIDE_BADEND2;
@@ -538,6 +546,7 @@ static void F_DoSlideShow(void)
 
     case SLIDE_BLAHEND1: // state #17
         S_StartMusic(mus_end);
+	finale_music = true;
         slideshow_panel = DEH_String("SS6F1");
         I_StartVoice(DEH_String("SS601A"));
         slideshow_state = SLIDE_BLAHEND2;
@@ -545,6 +554,7 @@ static void F_DoSlideShow(void)
         break;
     case SLIDE_BLAHEND2: // state #18
         S_StartMusic(mus_end);
+	finale_music = true;
         slideshow_panel = DEH_String("SS6F2");
         I_StartVoice(DEH_String("SS602A"));
         slideshow_state = SLIDE_BLAHEND3;
@@ -552,6 +562,7 @@ static void F_DoSlideShow(void)
         break;
     case SLIDE_BLAHEND3: // state #19
         S_StartMusic(mus_end);
+	finale_music = true;
         slideshow_panel = DEH_String("SS6F3");
         I_StartVoice(DEH_String("SS603A"));
         slideshow_state = SLIDE_EXIT; // Go to credits
@@ -567,6 +578,7 @@ static void F_DoSlideShow(void)
 
         slideshow_tics = 430;						// MOD. FOR DEMO: INC. BY +255
 	S_ChangeMusic(mus_drone, 1);					// ADDED FOR DEMO
+	finale_music = false;
         slideshow_state = SLIDE_DEMOEND2;
         break;
     case SLIDE_DEMOEND2: // state #26 - ditto
@@ -576,6 +588,7 @@ static void F_DoSlideShow(void)
             wipegamestate = -1;
 
         S_StartMusic(mus_fast);						// ADDED FOR DEMO
+	finale_music = true;
         finalecount = 0;						// ADDED FOR DEMO
         finalestage = F_STAGE_ARTSCREEN;				// ADDED FOR DEMO
         slideshow_tics = 1000;						// MOD. FOR DEMO: INC. BY +825
@@ -599,6 +612,7 @@ static void F_DoSlideShow(void)
 	    scroll_finished = true;					// ADDED FOR DEMO
 
         S_StartMusic(mus_fast);
+	finale_music = true;
         // haleyjd 20130301: The ONLY glitch fixed in 1.31 of Strife
         // *would* be something this insignificant, of course!
         if(gameversion != exe_strife_1_31)
@@ -621,6 +635,7 @@ static void F_DoSlideShow(void)
             wipegamestate = -1;						// UNSURE... DUNNO... (??) :-/
 */
         S_StartMusic(mus_fast);
+	finale_music = true;
         slideshow_state = SLIDE_CHOCO; // remain here.
         break;
     default:
@@ -853,6 +868,7 @@ void F_StartCast (void)
     castonmelee = 0;
     castattacking = false;
     S_ChangeMusic(mus_action, 1);
+    finale_music = false;
     I_StartVoice(NULL); // sorry Macil, be quiet for a sec :P
 }
 

@@ -155,6 +155,7 @@ boolean		STRIFE_1_X_REGISTERED;
 boolean		VOICES_1_X_REGISTERED;
 
 extern boolean	inhelpscreens;
+extern boolean  finale_music;
 
 extern int mus_engine;
 
@@ -652,7 +653,7 @@ void D_DoomLoop (void)
 //	printf("sceKernelTotalFreeMemSize = %d\n", totalFreeMemSize);
 */
 	// check if the OGG music stopped playing
-	if(gamestate == GS_LEVEL && usergame)
+	if(usergame && gamestate != GS_DEMOSCREEN && gamestate != GS_CONSOLE && !finale_music)
 	    I_SDL_PollMusic();
 
         // frame syncronous IO operations

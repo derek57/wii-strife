@@ -115,6 +115,7 @@ mapthing_t	playerstarts[MAXPLAYERS];
 mapthing_t      riftSpots[MAXRIFTSPOTS];
 
 extern boolean mus_cheat_used;
+extern boolean finale_music;
 
 
 
@@ -766,6 +767,7 @@ P_SetupLevel
     P_InitSwitchList();
 
     mus_cheat_used = false;
+    finale_music = false;
 
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
