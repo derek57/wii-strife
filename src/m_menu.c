@@ -661,7 +661,7 @@ menuitem_t FilesMenu[]=
 menu_t  FilesDef =
 {
     files_end,
-    NULL,
+    &MainDef,
     FilesMenu,
     M_DrawFilesMenu,
     97,45, // haleyjd 08/28/10: [STRIFE] changed y coord
@@ -1755,10 +1755,12 @@ void M_DrawReadThis3(void)
 void M_GameFiles(int choice)
 {
     // haleyjd 20141031: [SVE] make cast call context sensitive
+/*
     if(usergame)
         FilesDef.numitems = files_end - 1;
     else
         FilesDef.numitems = files_end;
+*/
     if(FilesDef.lastOn >= FilesDef.numitems)
         FilesDef.lastOn = 0;
 
@@ -3553,7 +3555,7 @@ void M_StartCast(int choice)
 
     if(usergame)
     {
-        M_StartMessage(DEH_String("You have to end your game first."), NULL, false);
+        M_StartMessage(DEH_String("You have to end your game first."), NULL, true);
         return;
     }
     M_StartMessage(i_seejoysticks ? CASTPROMPTGP : CASTPROMPT, M_CastCallResponse, true);
@@ -4607,7 +4609,7 @@ boolean M_Responder (event_t* ev)
         {
             if (itemOn+1 > currentMenu->numitems-1)
 	    {
-		if (FirstKey == FIRSTKEY_MAX)	// FOR PSP (if too menu items) ;-)
+		if (FirstKey == FIRSTKEY_MAX)	// FOR PSP (if too many menu items) ;-)
 		{
 	            itemOn = 0;
 		    FirstKey = 0;
@@ -4632,7 +4634,7 @@ boolean M_Responder (event_t* ev)
         do
         {
             if (!itemOn)
-		if (FirstKey == 0)		// FOR PSP (if too menu items) ;-)
+		if (FirstKey == 0)		// FOR PSP (if too many menu items) ;-)
 		{
                     itemOn = currentMenu->numitems-1;
 		    FirstKey = FIRSTKEY_MAX;
@@ -4960,10 +4962,18 @@ void M_Drawer (void)
     y = currentMenu->y;
     max = currentMenu->numitems;
 
+    if(currentMenu == &EpiDef && itemOn == 1)
+    {
+	M_WriteText(44, 131, "THIS MODE TRIES TO EMULATE THE");
+	M_WriteText(44, 144, "BEHAVIOR OF THE STRIFE TEASER");
+	M_WriteText(44, 157, "DEMO AS CLOSE TO THE ORIGINAL");
+	M_WriteText(44, 170, "AS POSSIBLE.");
+    }
+
     if(currentMenu == &SoundDef && itemOn == 7)
 	M_WriteText(38, 190, "You must restart to take effect.");
 
-    if (currentMenu->menuitems[itemOn].status == 5)		// FOR PSP (if too menu items) ;-)
+    if (currentMenu->menuitems[itemOn].status == 5)		// FOR PSP (if too many menu items) ;-)
 	max += FirstKey;
 
     if(!devparm && currentMenu == &OptionsDef)
