@@ -927,10 +927,10 @@ void D_DoAdvanceDemo (void)
     }
 
     ++demosequence;
-
+/*
     if(menuactive && demosequence == 1 && !usergame)
 	demosequence = 11;
-
+*/
     if(demosequence > 11)
     {
 	if(!isdemoversion)
